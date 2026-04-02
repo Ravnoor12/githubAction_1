@@ -1,0 +1,37 @@
+name: Python CI
+
+# this is event upon which the workflow is triggered  
+on:
+  push:  # when git push event is triggered, then workflow will be triggered
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# this is the job which will be executed when workflow is triggered
+jobs:
+  test:
+    runs-on: ubuntu-latest # container
+
+    steps:
+      # this check out the code from repo to the runner machine , analogous to downloading code on new virtual machine
+      - name: Check out code 
+        uses: actions/checkout@v4
+
+      # set up environment
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip' # this is to speed up the installation of dependencies by caching them
+
+      # installing dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Run tests
+      - name: Run tests
+        run: pytest
